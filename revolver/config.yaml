@@ -1,0 +1,97 @@
+units:
+  # Proxy Spacing Variables
+  kx: cx
+  ky: cy
+  # Padding Variables
+  px: kx + 2
+  py: ky + 2
+
+points:
+  zones:
+    matrix:
+      # Fix placement on KiCAD sheet.
+      anchor:
+        shift: [100, -100]
+      key:
+        padding: 1ky
+        spread: 1kx
+      rows:
+        mod:
+        home:
+      columns:
+        pinky:
+          key:
+            column_net: P017
+          rows.mod.skip: true
+        pinkymod:
+          key:
+            column_net: P020
+            spread: 0
+          rows.home.skip: true
+        ring:
+          key:
+            column_net: P022
+          rows.mod.skip: true
+        ringmod:
+          key:
+            column_net: P024
+            spread: 0
+          rows.home.skip: true
+        middle:
+          key:
+            column_net: P100
+          rows.mod.skip: true
+        index:
+          key:
+            column_net: P011
+          rows.mod.skip: true
+  mirror: &mirror
+    ref: matrix_index_home
+    distance: 2.5kx
+outlines:
+  raw:
+    - what: rectangle
+      where: true
+      size: [px, py]
+  keys:
+    - what: rectangle
+      where: true
+      size: [kx-0.5,ky-0.5]
+  board:
+    - what: polygon
+      operation: stack
+      points:
+        - ref: matrix_pinky_home
+          shift: [-0.5px,0.5py]
+        - ref: matrix_index_home
+          shift: [0.5px,0.5py]
+        - ref: matrix_index_home
+          shift: [0.5px,-0.5py-1ky]
+        #- ref: matrix_ring_mod
+        #  shift: [0.5px,-0.5py]
+        - ref: matrix_pinkymod_mod
+          shift: [-0.5px,-0.5py]
+      fillet: 3
+  combo:
+    - name: board
+    - operation: subtract
+      name: keys
+pcbs:
+  revolver_left:
+    outlines:
+      main:
+        outline: board
+    footprints:
+      choc_hotswap:
+        what: choc
+        where: true
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+      nice_nano:
+        what: nice_nano
+        params:
+          orientation: "up"
+        where:
+          ref: matrix_pinky_home
